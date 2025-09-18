@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FX-D</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-600 text-white shadow-md">
+    <div class="container mx-auto flex justify-between items-center px-4 py-3">
+      <!-- Logo / Judul -->
+      <a href="index.html" class="text-xl font-bold">FX-D</a>
+
+      <!-- Menu -->
+      <ul class="flex space-x-6">
+        <li><a href="index.html" class="hover:text-gray-200">Beranda</a></li>
+        <li><a href="Riwayat.html" class="hover:text-gray-200">Riwayat Trading</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Halaman Beranda -->
+  <section class="min-h-screen flex flex-col md:flex-row items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6">
+    
+    <!-- Hero Text -->
+    <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">Selamat Datang di TradingKu</h1>
+      <p class="text-lg mb-6">Pantau riwayat trading, profit, dan statistik performa Anda dengan mudah.</p>
+      <a href="Riwayat.html" class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-full shadow hover:bg-gray-200 transition">
+        Lihat Riwayat Trading
+      </a>
+    </div>
+
+    <!-- Progress Circle -->
+    <div class="md:w-1/2 flex justify-center">
+      <div class="relative w-48 h-48">
+        <svg class="transform -rotate-90 w-48 h-48">
+          <!-- Lingkaran background -->
+          <circle cx="96" cy="96" r="80" stroke="white" stroke-opacity="0.3" stroke-width="15" fill="transparent" />
+          <!-- Lingkaran progress -->
+          <circle 
+            cx="96" cy="96" r="80" 
+            stroke="white" stroke-width="15" fill="transparent"
+            stroke-dasharray="502"
+            stroke-dashoffset="502"
+            class="progress-circle"
+          />
+        </svg>
+        <!-- Persentase -->
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span id="progress-text" class="text-3xl font-bold">0%</span>
+        </div>
+      </div>
+    </div> 
+  </section>
+
+  <!-- Script untuk sinkronisasi progress -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const circle = document.querySelector(".progress-circle");
+      const text = document.getElementById("progress-text");
+
+      // Ambil data riwayat dari localStorage
+      const riwayat = JSON.parse(localStorage.getItem("tradingHistory")) || [];
+
+      let total = riwayat.length;
+      let sukses = 0;
+
+      // Hitung transaksi profit
+      riwayat.forEach(item => {
+        if (parseFloat(item.pl) > 0) {
+          sukses++;
+        }
+      });
+
+      // Hitung win rate %
+      let percent = total > 0 ? Math.round((sukses / total) * 100) : 0;
+
+      // Konfigurasi lingkaran
+      const radius = 80;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference - (percent / 100) * circumference;
+
+      circle.style.strokeDasharray = circumference;
+      circle.style.strokeDashoffset = circumference;
+
+      // Animasi
+      setTimeout(() => {
+        circle.style.transition = "stroke-dashoffset 1.5s ease";
+        circle.style.strokeDashoffset = offset;
+      }, 300);
+
+      // Update teks
+      text.textContent = percent + "%";
+    });
+  </script>
+
+</body>
+</html>

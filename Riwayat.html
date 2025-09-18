@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riwayat Trading</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-600 text-white shadow-md">
+    <div class="container mx-auto flex justify-between items-center px-4 py-3">
+      <a href="index.html" class="text-xl font-bold">FX-D</a>
+      <ul class="flex space-x-6">
+        <li><a href="FX-D.html" class="hover:text-gray-200">Beranda</a></li>
+        <li><a href="Riwayat.html" class="hover:text-gray-200">Riwayat Trading</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Konten -->
+  <main class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6 text-center">Riwayat Trading</h1>
+
+    <!-- Tabel Riwayat -->
+    <div class="overflow-x-auto bg-white rounded-lg shadow">
+      <table class="min-w-full border">
+        <thead class="bg-gray-200 text-gray-700">
+          <tr>
+            <th class="px-4 py-2 border">Tanggal</th>
+            <th class="px-4 py-2 border">Pair</th>
+            <th class="px-4 py-2 border">Lot</th>
+            <th class="px-4 py-2 border">Open</th>
+            <th class="px-4 py-2 border">Close</th>
+            <th class="px-4 py-2 border">Profit/Loss</th>
+            <th class="px-4 py-2 border">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="riwayat-body">
+          <!-- Data akan muncul otomatis dari LocalStorage -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tombol Tambah Riwayat -->
+    <div class="mt-6 text-center">
+      <a href="Tambah-Riwayat.html" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition">
+        Tambah Riwayat Trading
+      </a>
+    </div>
+  </main>
+
+  <!-- Script ambil data dari LocalStorage -->
+  <script>
+    const tbody = document.getElementById("riwayat-body");
+
+    // Fungsi render ulang tabel
+    function renderRiwayat() {
+      const riwayat = JSON.parse(localStorage.getItem("tradingHistory")) || [];
+      tbody.innerHTML = ""; // reset isi tabel
+
+      riwayat.forEach((item, index) => {
+        const row = `
+          <tr class="text-center">
+            <td class="px-4 py-2 border">${item.tanggal}</td>
+            <td class="px-4 py-2 border">${item.pair}</td>
+            <td class="px-4 py-2 border">${item.lot}</td>
+            <td class="px-4 py-2 border">${item.open}</td>
+            <td class="px-4 py-2 border">${item.close}</td>
+            <td class="px-4 py-2 border ${item.pl >= 0 ? 'text-green-600' : 'text-red-600'} font-semibold">${item.pl}</td>
+            <td class="px-4 py-2 border">
+              <button onclick="hapusRiwayat(${index})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">
+                Hapus
+              </button>
+            </td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    // Fungsi hapus item berdasarkan index
+    function hapusRiwayat(index) {
+      let riwayat = JSON.parse(localStorage.getItem("tradingHistory")) || [];
+      riwayat.splice(index, 1); // hapus data
+      localStorage.setItem("tradingHistory", JSON.stringify(riwayat));
+      renderRiwayat(); // refresh tabel
+    }
+
+    // Panggil render pertama kali
+    renderRiwayat();
+  </script>
+
+</body>
+</html>
